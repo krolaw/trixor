@@ -1,4 +1,4 @@
-package com.example.trixor
+package nz.co.prototec.trixor
 
 import io.flutter.embedding.android.FlutterActivity
 

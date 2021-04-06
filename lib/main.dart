@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'game.dart';
+import 'instructions.dart';
 
 void main() {
   runApp(MyApp());
@@ -59,13 +60,14 @@ class GameOption {
 
 class _MyHomePageState extends State<MyHomePage> {
   static final gameOptions = <GameOption>[
+    GameOption("Very Easy", 2, 3, 2),
     GameOption("Easy", 2, 3, 3),
     GameOption("Normal", 3, 3, 4),
     GameOption("Hard", 3, 3, 5),
     GameOption("Crazy", 3, 4, 5),
   ];
 
-  int gameOption = 1;
+  int gameOption = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +113,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text("Practice"),
                   onPressed: () =>
                       loadGame(context, gameOptions[gameOption], true)),
-              TextButton(child: Text("Instructions"), onPressed: () {}),
+              TextButton(
+                  child: Text("About"),
+                  onPressed: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Instructions()))),
               TextButton(child: Text("High Scores"), onPressed: () {}),
             ])),
       ),

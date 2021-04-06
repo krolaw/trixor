@@ -9,18 +9,19 @@ class Card {
   final List<int> attrs;
   bool selected = false;
 
-  Card._fromAttrs(this.attrs) : id = attrs.fold<int>(0, (e, i) => e * 3 + i);
+  Card._fromAttrs(this.attrs)
+      : id = attrs.reversed.fold<int>(0, (e, i) => e * 3 + i);
   Card(this.id, int depth)
       : attrs = List<int>.generate(depth, (i) => (id ~/ math.pow(3, i)) % 3);
 
   Card match(Card c) => Card._fromAttrs(
       List<int>.generate(attrs.length, (i) => (6 - attrs[i] - c.attrs[i]) % 3));
 
-  bool isMatch(Card a, Card b) {
+  /*bool isMatch(Card a, Card b) {
     for (int i = 0; i < attrs.length; i++)
       if (((6 - attrs[i] - a.attrs[i]) % 3) != b.attrs[i]) return false;
     return true;
-  }
+  }*/
 
   Sum sum(List<Card> cards) {
     final s = List<int>.filled(attrs.length, 0);
@@ -35,7 +36,7 @@ class Card {
           ..reversed);
   }
 
-  String toString() => attrs.toString();
+  String toString() => "$id " + attrs.toString();
 
   get hashCode => id;
   bool operator ==(Object c) => c is Card && c.id == id;
@@ -68,11 +69,11 @@ class Board {
     for (var i = 0; i < count - 1; i++) {
       final c = _findNonMatchingCard();
       used.add(c);
-      if (!remaining.remove(c)) print("Did not remove $c");
+      if (!remaining.remove(c)) print("Did not remove1 $c");
     }
     final c = _findMatchingCard();
     used.add(c);
-    if (!remaining.remove(c)) print("Did not remove $c");
+    if (!remaining.remove(c)) print("Did not remove2 $c");
   }
 
   Card _findNonMatchingCard() => (remaining

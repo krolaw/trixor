@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'logic.dart' as logic;
@@ -6,17 +8,17 @@ import 'dart:ui' as ui;
 class BoardView extends StatefulWidget {
   final int rows, cols;
   final logic.Board board;
+  final void Function(CardViewState) selectFn;
 
-  BoardView(this.cols, this.rows, int depth)
-      : board = logic.Board(cols * rows, depth) {
-    print("Board called");
-  }
+  BoardView(this.cols, this.rows, this.board, this.selectFn);
 
   @override
   _BoardState createState() => _BoardState();
 }
 
 class _BoardState extends State<BoardView> {
+  //final selected = <logic.Card>[];
+
   @override
   initState() {
     super.initState();
@@ -52,46 +54,75 @@ class _BoardState extends State<BoardView> {
             ),
             children: List<Widget>.generate(
               widget.board.used.length,
-              (i) => CardView(widget.board.used[i]),
+              (i) => CardView(widget.board.used[i], widget.selectFn),
             )));
   }
 }
 
 class CardView extends StatefulWidget {
   final logic.Card card;
+  final void Function(CardViewState) selectFn;
 
-  CardView(this.card);
+  CardView(this.card, this.selectFn);
 
   @override
-  _CardViewState createState() => _CardViewState();
+  CardViewState createState() => CardViewState();
 }
 
-class _CardViewState extends State<CardView> with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class CardViewState extends State<CardView> with TickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+  late logic.Card card;
+
+  bool selected = false;
 
   initState() {
     super.initState();
+    card = widget.card;
     _controller = AnimationController(
         duration: const Duration(milliseconds: 70),
         vsync: this,
         value: 1,
         upperBound: 1,
         lowerBound: 0.7);
+
     _animation = CurvedAnimation(parent: _controller, curve: Curves.linear);
+  }
+
+  Future<void> select(bool down) {
+    final c = Completer<void>();
+    selected = down;
+    late void Function(AnimationStatus) statusListener;
+    statusListener = (a) {
+      if (a == AnimationStatus.dismissed || a == AnimationStatus.completed) {
+        _controller.removeStatusListener(statusListener);
+        c.complete();
+      }
+    };
+    _controller.addStatusListener(statusListener);
+    selected ? _controller.reverse() : _controller.forward();
+    return c.future;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        widget.card.selected ^= true;
-        widget.card.selected ? _controller.reverse() : _controller.forward();
-      },
-      child: ScaleTransition(
-          scale: _animation,
-          child: CustomPaint(painter: CardPainter(widget.card))),
-    );
+        onTap: () async {
+          await select(!selected);
+          widget.selectFn(this);
+        },
+        child: Container(
+          color: Colors.transparent,
+          child: ScaleTransition(
+              scale: _animation,
+              child: CustomPaint(painter: CardPainter(widget.card))),
+        ));
   }
 }
 
@@ -102,24 +133,23 @@ var colours = [
 ];
 
 class CardPainter extends CustomPainter {
+  static late List<int> mixer;
+  static late List<int> ender;
+
   final List<int> attrs;
 
-  CardPainter(logic.Card card)
-      : attrs = <int>[
-          ...card.attrs,
-          ...List<int>.filled(5 - card.attrs.length, 0)
-        ];
+  CardPainter(logic.Card card) : attrs = <int>[...card.attrs, ...ender];
 
   @override
   void paint(Canvas canvas, Size size) {
     final Paint p = Paint();
 
-    final colour = colours[attrs[0]];
+    final colour = colours[attrs[mixer[0]]];
 
     canvas.clipRRect(RRect.fromLTRBR(0, 0, size.width, size.height,
         Radius.elliptical(size.width / 10, size.height / 10)));
 
-    switch (attrs[3]) {
+    switch (attrs[mixer[3]]) {
       case 0:
         /*p.shader = ui.Gradient.linear(
             Offset(size.width * 0.7, size.height * 0.7),
@@ -162,7 +192,7 @@ class CardPainter extends CustomPainter {
 
     final pp = Paint()..color = Colors.black;
 
-    switch (this.attrs[4]) {
+    switch (this.attrs[mixer[4]]) {
       case 0:
         final t = Path()..moveTo(0, size.height);
         t.relativeLineTo(size.width / 2, 0);
@@ -192,7 +222,7 @@ class CardPainter extends CustomPainter {
 
     final sw = 3 * size.longestSide / 20;
     final Path path = Path()..moveTo(sw, size.height - sw);
-    switch (attrs[1]) {
+    switch (attrs[mixer[1]]) {
       case 0:
         path.lineTo(size.width - sw, sw);
         path.lineTo(size.width - sw, size.height - sw);
@@ -229,7 +259,7 @@ class CardPainter extends CustomPainter {
           ..strokeWidth = width);
 
     final o = width * 1.2;
-    for (int i = 0; i < attrs[2] + 1; i++)
+    for (int i = 0; i < attrs[mixer[2]] + 1; i++)
       canvas.drawCircle(Offset(width + o / 2, width + o / 2 + i * o * 1.5),
           o / 2, Paint()..color = Colors.white);
   }
