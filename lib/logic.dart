@@ -1,13 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
-
-var rnd = math.Random();
-
 class Card {
   final int id;
   final List<int> attrs;
-  bool selected = false;
 
   Card._fromAttrs(this.attrs)
       : id = attrs.reversed.fold<int>(0, (e, i) => e * 3 + i);
@@ -17,16 +12,9 @@ class Card {
   Card match(Card c) => Card._fromAttrs(
       List<int>.generate(attrs.length, (i) => (6 - attrs[i] - c.attrs[i]) % 3));
 
-  /*bool isMatch(Card a, Card b) {
-    for (int i = 0; i < attrs.length; i++)
-      if (((6 - attrs[i] - a.attrs[i]) % 3) != b.attrs[i]) return false;
-    return true;
-  }*/
-
   Sum sum(List<Card> cards) {
     final s = List<int>.filled(attrs.length, 0);
     cards.forEach((c) {
-      if (c.selected) return;
       for (int i = 0; i < attrs.length; i++) if (attrs[i] == c.attrs[i]) s[i]++;
     });
     return Sum(
@@ -62,51 +50,81 @@ class Board {
   final List<Card> remaining, used;
 
   Board(this.count, this.depth)
-      : prefMax = count ~/ 3,
+      : prefMax = math.max(3, count ~/ 3),
         remaining = List<Card>.generate(
             math.pow(3, depth) as int, (i) => Card(i, depth)),
         used = <Card>[] {
-    for (var i = 0; i < count - 1; i++) {
-      final c = _findNonMatchingCard();
-      used.add(c);
-      if (!remaining.remove(c)) print("Did not remove1 $c");
+    for (var i = 0; i < 20; i++) {
+      try {
+        for (var i = 0; i < count - 1; i++) {
+          final c = _findNonMatchingCard(used);
+          used.add(c);
+          if (!remaining.remove(c)) print("Did not remove1 $c");
+        }
+        final c = _findMatchingCard(used);
+        used.add(c);
+        if (!remaining.remove(c)) print("Did not remove2 $c");
+        return;
+      } catch (e) {
+        remaining.addAll(used);
+        used.clear();
+      }
     }
-    final c = _findMatchingCard();
-    used.add(c);
-    if (!remaining.remove(c)) print("Did not remove2 $c");
+    throw ("Unable to setup board");
   }
 
-  Card _findNonMatchingCard() => (remaining
+  List<Card> select(List<int> positions) {
+    final cards = positions.map((p) => used[p]).toList();
+    if (cards[0].match(cards[1]) != cards[2]) return [];
+    final include = <Card>[];
+    include.add(_findNonMatchingCard(used.toList()..remove(cards)));
+
+    include.add(
+        _findMatchingCard(used.followedBy(include).toList()..remove(cards)));
+    include.add(
+        _findNonMatchingCard(used.followedBy(include).toList()..remove(cards)));
+    include.shuffle();
+    return include;
+  }
+
+  void replace(List<Card> replacements, List<int> positions) {
+    for (var i = 0; i < replacements.length; i++) {
+      remaining.add(used[positions[i]]);
+      used[positions[i]] = replacements[i];
+    }
+  }
+
+  Card _findNonMatchingCard(List<Card> tUsed) => (remaining
+          .where((r) => !tUsed.contains(r))
           .where((c) {
-            for (int i = 0; i < used.length - 1; i++)
-              for (int j = i + 1; j < used.length; j++)
-                if (c.match(used[i]) == used[j]) return false;
+            for (int i = 0; i < tUsed.length - 1; i++) {
+              for (int j = i + 1; j < tUsed.length; j++)
+                if (c.match(tUsed[i]) == tUsed[j]) return false;
+            }
             return true;
           })
-          .map((c) => c.sum(used))
+          .map((c) => c.sum(tUsed))
           .toList()
             ..shuffle()
             ..sort((a, b) => a.compare(b, prefMax)))
       .first
       .card;
 
-  Card _findMatchingCard() {
+  Card _findMatchingCard(List<Card> tUsed) {
     final possibles = <Card, int>{};
-    for (int i = 0; i < used.length - 1; i++)
-      for (int j = i + 1; j < used.length; j++) {
-        final c = used[i].match(used[j]);
+    for (int i = 0; i < tUsed.length - 1; i++) {
+      for (int j = i + 1; j < tUsed.length; j++) {
+        final c = used[i].match(tUsed[j]);
         possibles[c] = possibles.putIfAbsent(c, () => 0) + 1;
       }
+    }
     return ((possibles..removeWhere((key, value) => value > 1))
             .keys
-            .map((c) => c.sum(used))
+            .map((c) => c.sum(tUsed))
             .toList()
               ..shuffle()
               ..sort((a, b) => a.compare(b, prefMax)))
         .first
         .card;
   }
-
-//List<int> genCards(int count, int depth) {}
-
 }
