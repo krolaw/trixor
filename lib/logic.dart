@@ -4,12 +4,12 @@ class Card {
   final int id;
   final List<int> attrs;
 
-  Card._fromAttrs(this.attrs)
+  Card.fromAttrs(this.attrs)
       : id = attrs.reversed.fold<int>(0, (e, i) => e * 3 + i);
   Card(this.id, int depth)
       : attrs = List<int>.generate(depth, (i) => (id ~/ math.pow(3, i)) % 3);
 
-  Card match(Card c) => Card._fromAttrs(
+  Card match(Card c) => Card.fromAttrs(
       List<int>.generate(attrs.length, (i) => (6 - attrs[i] - c.attrs[i]) % 3));
 
   Sum sum(List<Card> cards) {
@@ -47,26 +47,19 @@ class Sum {
 
 class Board {
   final int count, depth, prefMax;
-  final List<Card> remaining, used;
+  final List<Card> used;
 
   Board(this.count, this.depth)
       : prefMax = math.max(3, count ~/ 3),
-        remaining = List<Card>.generate(
-            math.pow(3, depth) as int, (i) => Card(i, depth)),
         used = <Card>[] {
     for (var i = 0; i < 20; i++) {
       try {
-        for (var i = 0; i < count - 1; i++) {
-          final c = _findNonMatchingCard(used);
-          used.add(c);
-          if (!remaining.remove(c)) print("Did not remove1 $c");
-        }
-        final c = _findMatchingCard(used);
-        used.add(c);
-        if (!remaining.remove(c)) print("Did not remove2 $c");
+        for (var i = 0; i < count - 1; i++)
+          used.add(_findNonMatchingCard(used));
+        used.add(_findMatchingCard(used));
+        used.shuffle();
         return;
       } catch (e) {
-        remaining.addAll(used);
         used.clear();
       }
     }
@@ -76,46 +69,52 @@ class Board {
   List<Card> select(List<int> positions) {
     final cards = positions.map((p) => used[p]).toList();
     if (cards[0].match(cards[1]) != cards[2]) return [];
-    final include = <Card>[];
-    include.add(_findNonMatchingCard(used.toList()..remove(cards)));
-
-    include.add(
-        _findMatchingCard(used.followedBy(include).toList()..remove(cards)));
-    include.add(
-        _findNonMatchingCard(used.followedBy(include).toList()..remove(cards)));
-    include.shuffle();
-    return include;
+    final mUsed = used.toList()..removeWhere((c) => cards.contains(c));
+    assert(mUsed.length == used.length - 3);
+    for (var i = 0; i < 20; i++) {
+      try {
+        mUsed.add(_findNonMatchingCard(mUsed, exclude: cards));
+        assert(mUsed.length == used.length - 2);
+        mUsed.add(_findMatchingCard(mUsed));
+        mUsed.add(_findNonMatchingCard(mUsed));
+        return mUsed.sublist(mUsed.length - 3)..shuffle();
+      } catch (e) {}
+    }
+    throw ("Unable to update board");
   }
+
+  @override
+  String toString() => used.toString();
 
   void replace(List<Card> replacements, List<int> positions) {
-    for (var i = 0; i < replacements.length; i++) {
-      remaining.add(used[positions[i]]);
+    assert(replacements.length == 3);
+    for (var i = 0; i < replacements.length; i++)
       used[positions[i]] = replacements[i];
-    }
   }
 
-  Card _findNonMatchingCard(List<Card> tUsed) => (remaining
-          .where((r) => !tUsed.contains(r))
-          .where((c) {
-            for (int i = 0; i < tUsed.length - 1; i++) {
-              for (int j = i + 1; j < tUsed.length; j++)
-                if (c.match(tUsed[i]) == tUsed[j]) return false;
-            }
-            return true;
-          })
-          .map((c) => c.sum(tUsed))
-          .toList()
-            ..shuffle()
-            ..sort((a, b) => a.compare(b, prefMax)))
-      .first
-      .card;
+  Card _findNonMatchingCard(List<Card> tUsed, {exclude = const <Card>[]}) =>
+      (List<Card>.generate(math.pow(3, depth) as int, (i) => Card(i, depth))
+              .where((c) {
+                if (tUsed.contains(c) || exclude.contains(c)) return false;
+                for (int i = 0; i < tUsed.length - 1; i++) {
+                  for (int j = i + 1; j < tUsed.length; j++)
+                    if (c.match(tUsed[i]) == tUsed[j]) return false;
+                }
+                return true;
+              })
+              .map((c) => c.sum(tUsed))
+              .toList()
+                ..shuffle()
+                ..sort((a, b) => a.compare(b, prefMax)))
+          .first
+          .card;
 
   Card _findMatchingCard(List<Card> tUsed) {
     final possibles = <Card, int>{};
     for (int i = 0; i < tUsed.length - 1; i++) {
       for (int j = i + 1; j < tUsed.length; j++) {
-        final c = used[i].match(tUsed[j]);
-        possibles[c] = possibles.putIfAbsent(c, () => 0) + 1;
+        final c = tUsed[i].match(tUsed[j]);
+        possibles[c] = (possibles[c] ?? 0) + 1;
       }
     }
     return ((possibles..removeWhere((key, value) => value > 1))

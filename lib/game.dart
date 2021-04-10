@@ -91,6 +91,17 @@ class _GameState extends State<Game> {
                               if (replacing && selected.contains(i)) {
                                 if (replacements.length == 3) {
                                   final index = selected.indexOf(i);
+                                  if (index == 0) {
+                                    final now = DateTime.now();
+                                    final diff = now.difference(lastFound);
+                                    score += max(
+                                        (scoreDuration - diff).inSeconds, 1);
+                                    expiry.add(maxTimeAdd < diff
+                                        ? Duration.zero
+                                        : maxTimeAdd - diff);
+                                    if (expiry.difference(now) > maxDuration)
+                                      expiry = now.add(maxDuration);
+                                  }
                                   final r = CustomPaint(
                                       painter:
                                           CardPainter(replacements[index]));
@@ -103,7 +114,9 @@ class _GameState extends State<Game> {
                                                 replacing = false;
                                                 board.replace(
                                                     replacements, selected);
+                                                //print(board);
                                                 selected.clear();
+                                                lastFound = DateTime.now();
                                               })
                                           : () {});
                                 } else {

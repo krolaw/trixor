@@ -26,6 +26,12 @@ class MyApp extends StatelessWidget {
           //scaffoldBackgroundColor: Colors.black,
           primaryColor: Colors.green,
           brightness: Brightness.dark,
+          textTheme: TextTheme(
+              headline1: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.normal,
+                  height: 2,
+                  color: Colors.green)),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
                 backgroundColor: Colors.green, primary: Colors.white),
@@ -60,7 +66,7 @@ class GameOption {
 
 class _MyHomePageState extends State<MyHomePage> {
   static final gameOptions = <GameOption>[
-    GameOption("Very Easy", 2, 3, 2),
+    GameOption("Very Easy", 2, 2, 2),
     GameOption("Easy", 2, 3, 3),
     GameOption("Normal", 3, 3, 4),
     GameOption("Hard", 3, 3, 5),

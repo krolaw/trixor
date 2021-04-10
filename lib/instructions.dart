@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'cardView.dart';
+import 'logic.dart' as logic;
 
 class Instructions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final headStyle = Theme.of(context).textTheme.headline6;
+    final cardMatch = <logic.Card>[
+      logic.Card.fromAttrs([0, 1, 2]),
+      logic.Card.fromAttrs([0, 2, 0]),
+      logic.Card.fromAttrs([0, 0, 1]),
+    ];
+
+    final headStyle = Theme.of(context).textTheme.headline1;
 
     return Scaffold(
       appBar: AppBar(title: Text("TriXOR : About")),
@@ -11,26 +19,45 @@ class Instructions extends StatelessWidget {
         padding: EdgeInsets.all(6),
         children: [
           Text("Introduction", style: headStyle),
-          Divider(),
+          //Divider(),
           Text(
             "This game is designed to exercise both the pattern matching"
             " (right) and logic (left) sides of the brain simultaneously,"
             " strengthening communication between the two.",
             textAlign: TextAlign.justify,
           ),
-          Divider(),
-          Text("How To Play", style: headStyle),
-          Divider(),
+          //Divider(),
+          Text("Goal", style: headStyle),
+          //Divider(),
           Text(
-            "Find three cards that have the same properties in common. Therefore"
-            " a group must have:\n"
-            " - All same or all different background colour; and\n"
-            " - All same or all different lexicons; and\n"
-            " - All same or all different circle counts; and\n"
-            " - All same or all different background shading; and\n"
-            " - All same or all different bottom left corner shape\n\n"
-            "This means a set of three cards can share nothing in common.\n"
-            "Tip: Look for differences rather than similaries.",
+            "Find a set of three cards, where any shared property is shared by all three."
+            " i.e. zero, one, or three of cards in the set can be green, but not two.\n\n"
+            "Depending on level there are up to 5 changing properties:\n"
+            " - Colour (red, green, blue)\n"
+            " - Symbol (curve, point, stand)\n"
+            " - Dots (1, 2, 3)\n"
+            " - Pattern (gradient, solid, striped)\n"
+            " - Corner (triangle, circle, square)\n\n"
+            "Tip: Differences matter as much as similarities.\n",
+            textAlign: TextAlign.justify,
+          ),
+          Row(
+            children: cardMatch
+                .map((c) => Container(
+                    margin: EdgeInsets.all(6),
+                    width: 80,
+                    height: 80,
+                    child: CustomPaint(painter: CardPainter(c))))
+                .toList(),
+          ),
+
+          Text("Game Play", style: headStyle),
+
+          //Divider(),
+          Text(
+            "Score and time accumulates based on how quickly a set is found. "
+            "Once found, the three cards are replaced and the game continues. "
+            "The game finishes when time runs out. ",
             textAlign: TextAlign.justify,
           ),
         ],
