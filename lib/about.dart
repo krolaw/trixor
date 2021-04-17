@@ -109,53 +109,66 @@ class HowToPlay extends StatelessWidget {
           _cardRow(context, a4, false, false),
           Text("\nSymbol mismatch"),
           _cardRow(context, a5, false, false),
-          Text("Game Details/Tips", style: headStyle),
-          ...[
-            "There is exactly one set on the grid at any given time.",
-            "When the set is found, its three cards are replaced and the game continues.",
-            "Each set increases the game score by between 1 and 30 points,"
-                " decreased by the seconds taken to find it.",
-            "Each set increases the remaining game time by between 0 and 20 seconds,"
-                " decreased by the time taken to find it.",
-            "If the reveal button is used to illuminate a set, the set's points"
-                " and time value is set to 0.",
-            "In practise mode there is no time limit and a set is worth 1 point."
-          ].asMap().entries.map((c) =>
-              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text("Game Details", style: headStyle),
+          ...<Widget>[
+            ...[
+              "There is exactly one set on the grid at any given time.",
+              "When the set is found, its three cards are replaced and the game continues.",
+              "Each set increases the game score by between 1 and 30 points,"
+                  " decreased by the seconds taken to find it.",
+              "Each set increases the remaining game time by between 0 and 20 seconds,"
+                  " decreased by the time taken to find it.",
+              "If the reveal button is used to illuminate a set, the set's points"
+                  " and time value is set to 0.",
+              "In practise mode there is no time limit and a set is worth 1 point."
+            ].map((t) => Text(
+                  t,
+                  textAlign: TextAlign.justify,
+                )),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                    "Depending on level, there are up to 5 changing properties:",
+                    textAlign: TextAlign.justify),
+                ...[
+                  "Colour (" +
+                      p1.map((c) => ["red", "green", "blue"][c[0]]).join(", ") +
+                      ")",
+                  "Symbol (" +
+                      p1
+                          .map((c) => ["curve", "point", "stand"][c[1]])
+                          .join(", ") +
+                      ")",
+                  "Dots (" + p1.map((c) => [1, 2, 3][c[2]]).join(", ") + ")",
+                  "Pattern (" +
+                      p1
+                          .map((c) => ["gradient", "solid", "striped"][c[3]])
+                          .join(", ") +
+                      ")",
+                  "Corner (" +
+                      p1
+                          .map((c) => ["triangle", "square", "circle"][c[4]])
+                          .join(", ") +
+                      ")"
+                ].map((c) => Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(" • "),
+                          Expanded(child: Text(c, textAlign: TextAlign.justify))
+                        ])),
+                _cardRow(context, p1, false, true),
+              ],
+            )
+          ].asMap().entries.map((c) => Container(
+              padding: EdgeInsets.only(top: c.key == 0 ? 0 : 10),
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text(" ${c.key + 1}. "),
                 Expanded(
-                    child: Text(
-                  c.value,
-                  textAlign: TextAlign.justify,
-                ))
-              ])),
-          Text("\nDepending on level, there are up to 5 changing properties:",
-              textAlign: TextAlign.justify),
-          ...[
-            "Colour (" +
-                p1.map((c) => ["red", "green", "blue"][c[0]]).join(", ") +
-                ")",
-            "Symbol (" +
-                p1.map((c) => ["curve", "point", "stand"][c[1]]).join(", ") +
-                ")",
-            "Dots (" + p1.map((c) => [1, 2, 3][c[2]]).join(", ") + ")",
-            "Pattern (" +
-                p1
-                    .map((c) => ["gradient", "solid", "striped"][c[3]])
-                    .join(", ") +
-                ")",
-            "Corner (" +
-                p1
-                    .map((c) => ["triangle", "square", "circle"][c[4]])
-                    .join(", ") +
-                ")"
-          ].map((c) => Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(" • "),
-                    Expanded(child: Text(c, textAlign: TextAlign.justify))
-                  ])),
-          _cardRow(context, p1, false, true),
+                  child: c.value,
+                )
+              ]))),
           Text("Licences", style: headStyle),
           Text("This app depends on various libraries. Their licences can be"
               " viewed by clicking the button below."),
