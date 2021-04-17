@@ -75,7 +75,7 @@ class Animator extends StatefulWidget {
   final Widget Function(double) transformer;
   final Duration duration;
 
-  Animator(this.transformer, this.duration, this.finished);
+  Animator(this.transformer, this.duration, this.finished) : super();
 
   @override
   _ShrinkState createState() => _ShrinkState();
@@ -83,7 +83,6 @@ class Animator extends StatefulWidget {
 
 class _ShrinkState extends State<Animator> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  //late Animation<double> _animation;
 
   @override
   void initState() {

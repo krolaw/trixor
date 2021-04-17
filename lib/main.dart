@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'game.dart';
-import 'instructions.dart';
+import 'about.dart';
 
 void main() {
   runApp(MyApp());
@@ -68,8 +68,9 @@ class _MyHomePageState extends State<MyHomePage> {
   static final gameOptions = <GameOption>[
     GameOption("Very Easy", 2, 2, 2),
     GameOption("Easy", 2, 3, 3),
-    GameOption("Normal", 3, 3, 4),
-    GameOption("Hard", 3, 3, 5),
+    GameOption("Normal", 2, 4, 4),
+    GameOption("Hard", 2, 4, 5),
+    GameOption("Harder", 3, 3, 5),
     GameOption("Crazy", 3, 4, 5),
   ];
 
@@ -110,19 +111,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 label: gameOptions[gameOption].title,
                 onChanged: (v) => setState(() => gameOption = v.toInt()),
               ),
-              Divider(),
+              //Divider(),
               TextButton(
                   child: Text("Play"),
                   onPressed: () =>
                       loadGame(context, gameOptions[gameOption], false)),
               TextButton(
-                  child: Text("Practice"),
+                  child: Text("Practise"),
                   onPressed: () =>
                       loadGame(context, gameOptions[gameOption], true)),
               TextButton(
                   child: Text("About"),
                   onPressed: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Instructions()))),
+                      MaterialPageRoute(builder: (context) => HowToPlay()))),
               TextButton(child: Text("High Scores"), onPressed: () {}),
             ])),
       ),
@@ -130,7 +131,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   loadGame(BuildContext context, GameOption g, bool practise) {
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => Game(g.cols, g.rows, g.depth)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Game(g.cols, g.rows, g.depth, practise)));
   }
 }

@@ -9,8 +9,11 @@ class Card {
   Card(this.id, int depth)
       : attrs = List<int>.generate(depth, (i) => (id ~/ math.pow(3, i)) % 3);
 
-  Card match(Card c) => Card.fromAttrs(
-      List<int>.generate(attrs.length, (i) => (6 - attrs[i] - c.attrs[i]) % 3));
+  Card match(Card c) {
+    assert(c.attrs.length == attrs.length);
+    return Card.fromAttrs(
+        List<int>.generate(attrs.length, (i) => _match(attrs[i], c.attrs[i])));
+  }
 
   Sum sum(List<Card> cards) {
     final s = List<int>.filled(attrs.length, 0);
@@ -29,6 +32,8 @@ class Card {
   get hashCode => id;
   bool operator ==(Object c) => c is Card && c.id == id;
 }
+
+int _match(int a, int b) => (6 - a - b) % 3;
 
 class Sum {
   final Card card;
@@ -66,19 +71,37 @@ class Board {
     throw ("Unable to setup board");
   }
 
+  // 0,0,0 (a == b) ? 2 : (a == c ? 1 : 0)
+  // 0,0,1 = 1   2,0,1
+  // 0,0,2 = 2   1,0,2
+  // 0,1,0 = 1   2,0,0
+  // 0,1,1 = 2   2,2,1
+  // 1,2,2 =
+
   List<Card> select(List<int> positions) {
     final cards = positions.map((p) => used[p]).toList();
-    if (cards[0].match(cards[1]) != cards[2]) return [];
-    final mUsed = used.toList()..removeWhere((c) => cards.contains(c));
-    assert(mUsed.length == used.length - 3);
+    if (cards[0].match(cards[1]) != cards[2]) {
+      return [
+        Card.fromAttrs(List<int>.generate(depth, (i) {
+          final a = cards[0].attrs[i];
+          final b = cards[1].attrs[i];
+          final c = cards[2].attrs[i];
+          if (_match(a, b) == c) return -1;
+          return cards[a == b ? 2 : (a == c ? 1 : 0)].attrs[i];
+        }))
+      ];
+    }
+
     for (var i = 0; i < 20; i++) {
-      try {
-        mUsed.add(_findNonMatchingCard(mUsed, exclude: cards));
-        assert(mUsed.length == used.length - 2);
-        mUsed.add(_findMatchingCard(mUsed));
-        mUsed.add(_findNonMatchingCard(mUsed));
-        return mUsed.sublist(mUsed.length - 3)..shuffle();
-      } catch (e) {}
+      //try {
+      final mUsed = used.toList()..removeWhere((c) => cards.contains(c));
+      assert(mUsed.length == used.length - 3);
+      mUsed.add(_findNonMatchingCard(mUsed, exclude: cards));
+      assert(mUsed.length == used.length - 2);
+      mUsed.add(_findMatchingCard(mUsed));
+      mUsed.add(_findNonMatchingCard(mUsed));
+      return mUsed.sublist(mUsed.length - 3)..shuffle();
+      //} catch (e) {}
     }
     throw ("Unable to update board");
   }
@@ -125,5 +148,15 @@ class Board {
               ..sort((a, b) => a.compare(b, prefMax)))
         .first
         .card;
+  }
+
+  List<int> findSet() {
+    for (int i = 0; i < used.length - 2; i++)
+      for (int j = i + 1; j < used.length - 1; j++) {
+        final match = used[i].match(used[j]);
+        for (int k = j + 1; k < used.length; k++)
+          if (used[k] == match) return [i, j, k];
+      }
+    throw ("set not found");
   }
 }
