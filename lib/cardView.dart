@@ -9,13 +9,43 @@ var colours = [
   Colors.blue,
 ];
 
+class CardView extends StatefulWidget {
+  final int gap;
+  final logic.Card card;
+  final bool illuminate;
+  final bool Function()? onTap;
+
+  CardView(this.card, this.gap, {this.illuminate = false, this.onTap});
+
+  @override
+  _CardViewState createState() => _CardViewState();
+}
+
+class _CardViewState extends State<CardView> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(widget.gap * 1.5),
+        border: Border.all(
+            width: widget.gap / 6,
+            color: widget.illuminate ? Colors.white : Colors.transparent),
+      ),
+      padding: EdgeInsets.all(widget.gap / 6),
+      child: CustomPaint(painter: CardPainter(widget.card)),
+    );
+  }
+}
+
 class CardPainter extends CustomPainter {
   //static late List<int> mixer;
   //static late List<int> ender;
 
   final List<int> attrs;
   final List<int> fail;
-  final failCol = Colors.pinkAccent.shade700;
+  final failCol = Colors.purpleAccent.shade100;
+  final failCol2 = Colors.purpleAccent.shade400;
+  final failCol3 = Colors.purpleAccent.shade700;
   CardPainter(logic.Card card, {bool omit = false, logic.Card? fail})
       : attrs = [...card.attrs],
         fail = [...(fail?.attrs ?? [])] {
@@ -27,7 +57,7 @@ class CardPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint p = Paint();
 
-    final colour = fail[0] == attrs[0] ? failCol : colours[attrs[0]];
+    final colour = fail[0] == attrs[0] ? failCol2 : colours[attrs[0]];
 
     canvas.clipRRect(RRect.fromLTRBR(0, 0, size.width, size.height,
         Radius.elliptical(size.width / 10, size.height / 10)));
@@ -36,7 +66,7 @@ class CardPainter extends CustomPainter {
       case 0:
         p.shader = ui.Gradient.linear(Offset(0, 0), Offset(size.width, 0), [
           colour,
-          attrs.length > 3 && fail[3] == attrs[3] ? failCol : Colors.black
+          attrs.length > 3 && fail[3] == attrs[3] ? failCol3 : Colors.black
         ], [
           0.5,
           0.95
@@ -49,7 +79,7 @@ class CardPainter extends CustomPainter {
         p.shader = ui.Gradient.linear(
             Offset(0, 0),
             Offset(size.width * 0.20, size.height * 0.10),
-            [colour, fail[3] == attrs[3] ? failCol : Colors.black],
+            [colour, fail[3] == attrs[3] ? failCol3 : Colors.black],
             [0.6, 0.6],
             TileMode.repeated);
         break;
@@ -59,7 +89,7 @@ class CardPainter extends CustomPainter {
 
     final pp = Paint()
       ..color = attrs.length > 4
-          ? (fail[4] == attrs[4] ? failCol : Colors.black)
+          ? (fail[4] == attrs[4] ? failCol3 : Colors.black)
           : Colors.black;
 
     switch (attrs.length > 4 ? this.attrs[4] : 0) {
@@ -142,5 +172,5 @@ class CardPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

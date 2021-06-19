@@ -115,12 +115,12 @@ class HowToPlay extends StatelessWidget {
               "There is exactly one set on the grid at any given time.",
               "When the set is found, its three cards are replaced and the game continues.",
               "Each set increases the game score by between 1 and 30 points,"
-                  " decreased by the seconds taken to find it.",
+                  " depending on the time taken to find it.",
               "Each set increases the remaining game time by between 0 and 20 seconds,"
-                  " decreased by the time taken to find it.",
-              "If the reveal button is used to illuminate a set, the set's points"
-                  " and time value is set to 0.",
-              "In practise mode there is no time limit and a set is worth 1 point."
+                  " depending on the time taken to find it.",
+              "If the reveal button is used to illuminate the current set,"
+                  " the set will not increase points or time.",
+              "In practise mode there is no time limit (the game never ends) and each set is worth 1 point."
             ].map((t) => Text(
                   t,
                   textAlign: TextAlign.justify,
@@ -169,6 +169,12 @@ class HowToPlay extends StatelessWidget {
                   child: c.value,
                 )
               ]))),
+          /*AspectRatio(
+              aspectRatio: 1,
+              child: CustomPaint(
+                  size: Size(80, 80),
+                  painter: CardPainter(logic.Card.fromAttrs([2, 0, 2, 0, 0]),
+                      omit: false))),*/
           Text("Licences", style: headStyle),
           Text("This app depends on various libraries. Their licences can be"
               " viewed by clicking the button below."),

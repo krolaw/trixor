@@ -4,6 +4,41 @@ import 'package:flutter/material.dart';
 
 const zoom = 0.7;
 
+class Anim {
+  final Transform Function(double, Widget, Widget?) transform;
+  final int millis;
+
+  Anim(this.transform, this.millis);
+
+  static final shrink = Anim(
+      (t, w, _) => Transform.scale(scale: 1.0 - (1 - zoom) * t, child: w), 100);
+  static final grow = Anim(
+      (t, w, _) => Transform.scale(scale: t + zoom * (1 - t), child: w), 100);
+
+  static final success = Anim(
+      (t, w, n) => Transform.scale(
+          scale: zoom + (1 - zoom) * t,
+          child: Transform.rotate(
+            angle: t * 4 * pi,
+            child: t > 0.5 ? n : w,
+          )),
+      500);
+
+  static final fail = Anim(
+      (t, w, _) => Transform.scale(
+          scale: zoom + (1 - zoom) * t,
+          child: Transform.rotate(
+              angle: sin(((t * 4) % 1.0) * 2 * pi) *
+                  pi /
+                  6 *
+                  (1 - t), // 60 degree shake
+              child: w)),
+      1000);
+
+  animate(Widget w, Widget? n, void Function() finished) => Animator(
+      (t) => transform(t, w, n), Duration(milliseconds: millis), finished);
+}
+
 class In extends StatelessWidget {
   final Widget card;
   final void Function() finished;
@@ -78,10 +113,10 @@ class Animator extends StatefulWidget {
   Animator(this.transformer, this.duration, this.finished) : super();
 
   @override
-  _ShrinkState createState() => _ShrinkState();
+  _Animate createState() => _Animate();
 }
 
-class _ShrinkState extends State<Animator> with SingleTickerProviderStateMixin {
+class _Animate extends State<Animator> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override

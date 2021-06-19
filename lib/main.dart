@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'settings.dart';
 import 'game.dart';
 import 'about.dart';
 
@@ -64,17 +65,43 @@ class GameOption {
   GameOption(this.title, this.cols, this.rows, this.depth);
 }
 
+class CardOption {
+  final int cols, rows;
+
+  CardOption(this.cols, this.rows);
+
+  get count => cols * rows;
+}
+
 class _MyHomePageState extends State<MyHomePage> {
+  static int gameOption = 3;
+
   static final gameOptions = <GameOption>[
-    GameOption("Very Easy", 2, 2, 2),
+    GameOption("Baby", 2, 2, 2),
+    GameOption("Very Easy", 2, 2, 3),
     GameOption("Easy", 2, 3, 3),
-    GameOption("Normal", 2, 4, 4),
-    GameOption("Hard", 2, 4, 5),
-    GameOption("Harder", 3, 3, 5),
-    GameOption("Crazy", 3, 4, 5),
+    GameOption("Normal", 2, 3, 4),
+    GameOption("Challenging", 2, 3, 5),
+    GameOption("Hard", 2, 4, 4),
+    GameOption("Advanced", 2, 4, 5),
+    GameOption("Crazy", 3, 4, 4),
+    GameOption("Psychotic", 3, 4, 5),
   ];
 
-  int gameOption = 2;
+  /*static final cardOptions = <CardOption>[
+    CardOption(2, 2),
+    CardOption(2, 3),
+    CardOption(2, 4),
+    CardOption(3, 3),
+    CardOption(2, 5),
+    CardOption(3, 4),
+    CardOption(3, 5),
+    CardOption(4, 4),
+  ];
+
+  
+  static int cardOption = 2;
+  static int properties = 3;*/
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
             future: PackageInfo.fromPlatform().then((a) => a.version),
             builder: (context, value) => Text("TriXOR V" + value.data!)),
       ),
+      drawer: SettingsDrawer(),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -102,24 +130,62 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-              Text("Difficulty"),
-              Slider(
-                value: gameOption.toDouble(),
-                min: 0,
-                max: gameOptions.length - 1,
-                divisions: gameOptions.length - 1,
-                label: gameOptions[gameOption].title,
-                onChanged: (v) => setState(() => gameOption = v.toInt()),
-              ),
+              Stack(children: [
+                Text("Difficulty"),
+                Container(
+                    padding: EdgeInsets.only(top: 5),
+                    child: FutureBuilder(
+                        future: settings.loaded.future,
+                        builder: (context, _) => Slider(
+                              value: settings.difficulty.toDouble(),
+                              min: 0,
+                              max: gameOptions.length - 1,
+                              divisions: gameOptions.length - 1,
+                              label: gameOptions[gameOption].title,
+                              onChanged: (v) => setState(
+                                  () => settings.difficulty = v.toInt()),
+                            )))
+              ]),
+              /*Stack(children: [
+                Text("Cards"),
+                Container(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Slider(
+                      value: cardOption.toDouble(),
+                      min: 0,
+                      max: cardOptions.length - 1,
+                      divisions: cardOptions.length - 1,
+                      label: cardOptions[cardOption].count.toString(),
+                      onChanged: (v) => setState(() => cardOption = v.toInt()),
+                    ))
+              ]),
+              Stack(children: [
+                Text("Properties"),
+                Container(
+                    padding: EdgeInsets.only(top: 5),
+                    child: Slider(
+                      value: properties.toDouble(),
+                      min: 2,
+                      max: 5,
+                      divisions: 3,
+                      label: properties.toString(),
+                      onChanged: (v) => setState(() => properties = v.toInt()),
+                    ))
+              ]),*/
+
               //Divider(),
               TextButton(
                   child: Text("Play"),
                   onPressed: () =>
                       loadGame(context, gameOptions[gameOption], false)),
+              /* onPressed: () => loadGame2(
+                      context, cardOptions[cardOption], properties, false)),*/
               TextButton(
                   child: Text("Practise"),
                   onPressed: () =>
                       loadGame(context, gameOptions[gameOption], true)),
+              /*onPressed: () => loadGame2(
+                      context, cardOptions[cardOption], properties, true)),*/
               TextButton(
                   child: Text("About"),
                   onPressed: () => Navigator.push(context,
@@ -135,5 +201,12 @@ class _MyHomePageState extends State<MyHomePage> {
         context,
         MaterialPageRoute(
             builder: (context) => Game(g.cols, g.rows, g.depth, practise)));
+  }
+
+  loadGame2(BuildContext context, CardOption g, int depth, bool practise) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Game(g.cols, g.rows, depth, practise)));
   }
 }

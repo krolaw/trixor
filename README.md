@@ -16,11 +16,14 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ## TODOs
-- High Scores
-- Wake lock
-- Icon
-- In App purchases
-- Sounds
-- Settings
-- Full screen
 - High speed taps
+x Pause on leave
+* Settings
+- Sounds
+- High Scores
+- In App purchases
+* Full screen
+
+
+
+flutter build apk --obfuscate --split-debug-info=$HOME/junk --target-platform android-arm64

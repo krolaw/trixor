@@ -24,7 +24,11 @@ dependencies:
   flutter:
     sdk: flutter
   package_info: ^2.0.0
-
+  wakelock: ^0.5.1 # https://pub.dev/packages/wakelock
+  sqflite: ^2.0.0+3
+  audioplayers: ^0.19.0 # https://pub.dev/packages/audioplayers
+  vibration: ^1.7.4-nullsafety.0 # https://pub.dev/packages/vibration
+  shared_preferences: ^2.0.6 # https://pub.dev/packages/shared_preferences
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -33,6 +37,16 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: ^0.9.0 # https://pub.dev/packages/flutter_launcher_icons
+
+flutter_icons: # flutter pub run flutter_launcher_icons:main
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon.png"
+  adaptive_icon_background: "assets/iconbackground.png"
+  adaptive_icon_foreground: "assets/iconforeground.png"
+  remove_alpha_ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
