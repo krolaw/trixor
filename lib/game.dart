@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:trixor/highscores.dart';
 import 'package:trixor/settings.dart';
 import 'cardView.dart';
 import 'logic.dart' as logic;
@@ -10,16 +11,16 @@ import 'animations.dart' as animation;
 import 'package:wakelock/wakelock.dart';
 import 'package:vibration/vibration.dart';
 
-const startDuration = Duration(minutes: 3);
+const startDuration = Duration(seconds: 10); //Duration(minutes: 3);
 const maxDuration = Duration(minutes: 4);
 const scoreDuration = 30;
 const maxTimeAdd = Duration(seconds: 20);
 
 class Game extends StatefulWidget {
-  final int short, long, depth;
+  final int short, long, depth, level;
   final bool practise;
 
-  Game(this.short, this.long, this.depth, this.practise) : super();
+  Game(this.level, this.short, this.long, this.depth, this.practise) : super();
 
   @override
   _GameState createState() => _GameState();
@@ -29,7 +30,6 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
   int score = 0;
   DateTime lastFound = DateTime.now();
   DateTime expiry = DateTime.now().add(startDuration);
-  //Duration remainingTime = startDuration;
 
   late Timer timer;
   bool timerShow = true;
@@ -71,6 +71,51 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
     }
   }
 
+  gameOver() async {
+    final name = widget.practise
+        ? null
+        : await highscores.isHighScore(widget.level, score);
+    TextEditingController tc = TextEditingController(text: name);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Game Over", textScaleFactor: 1.5),
+            content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: name != null
+                    ? [
+                        Text("High Score: $score"),
+                        TextFormField(
+                            decoration: InputDecoration(hintText: "Your name"),
+                            autocorrect: false,
+                            autofocus: true,
+                            maxLength: 20,
+                            controller: tc)
+                      ]
+                    : [Text("Score: $score")]),
+            actions: [
+              TextButton(
+                  onPressed: () =>
+                      finishHighscore(() => Navigator.pop(context), tc),
+                  child: Text("Show Board")),
+              TextButton(
+                  child: Text("Exit"),
+                  onPressed: () => finishHighscore(
+                      () =>
+                          Navigator.popUntil(context, (route) => route.isFirst),
+                      tc))
+            ],
+          );
+        });
+  }
+
+  finishHighscore(void Function() f, TextEditingController tc) async {
+    if (tc.text.length > 0)
+      await highscores.saveHighScore(widget.level, score, tc.text);
+    f();
+  }
+
   Timer setupTimer() {
     return widget.practise
         ? Timer(Duration.zero, () {})
@@ -83,23 +128,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
                 showSet = board.findSet();
                 timer.cancel();
                 Wakelock.disable();
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Game Over", textScaleFactor: 1.5),
-                        content: Text("Score: $score"),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text("Show Board")),
-                          TextButton(
-                              child: Text("Exit"),
-                              onPressed: () => Navigator.popUntil(
-                                  context, (route) => route.isFirst)),
-                        ],
-                      );
-                    });
+                gameOver();
               }
               timerShow = (remainingTime.inSeconds >= 20) ||
                   (remainingTime.inMilliseconds % 1000 > 500);
@@ -269,7 +298,6 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
             }));
     var remainingTime = expiry.difference(DateTime.now());
     return Scaffold(
-        //appBar: AppBar(title: Text("TriXOR: $score")),
         body: Container(
             child: SafeArea(
                 child: Column(
@@ -282,8 +310,6 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
               timerShow,
               () => setState(() => showSet = board.findSet())),
           Expanded(
-              //child: Container(
-              //    color: Colors.lightBlue,
               child: Center(
                   child: AspectRatio(
                       aspectRatio: (cols * 15 - 1) / (rows * 15 - 1),
@@ -324,7 +350,6 @@ class _Timer extends StatelessWidget {
       Text(
         "TriXOR: $score ",
         textScaleFactor: 1.4,
-        //textAlign: TextAlign.end,
       ),
       Align(
           alignment: Alignment.topLeft,

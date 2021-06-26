@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'highscores.dart';
 import 'settings.dart';
 import 'game.dart';
 import 'about.dart';
@@ -63,6 +64,18 @@ class GameOption {
   final int cols, rows, depth;
 
   GameOption(this.title, this.cols, this.rows, this.depth);
+
+  static final options = <GameOption>[
+    GameOption("Baby", 2, 2, 2),
+    GameOption("Very Easy", 2, 2, 3),
+    GameOption("Easy", 2, 3, 3),
+    GameOption("Normal", 2, 3, 4),
+    GameOption("Challenging", 2, 3, 5),
+    GameOption("Hard", 2, 4, 4),
+    GameOption("Advanced", 2, 4, 5),
+    GameOption("Crazy", 3, 4, 4),
+    GameOption("Psychotic", 3, 4, 5),
+  ];
 }
 
 class CardOption {
@@ -74,20 +87,6 @@ class CardOption {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  static int gameOption = 3;
-
-  static final gameOptions = <GameOption>[
-    GameOption("Baby", 2, 2, 2),
-    GameOption("Very Easy", 2, 2, 3),
-    GameOption("Easy", 2, 3, 3),
-    GameOption("Normal", 2, 3, 4),
-    GameOption("Challenging", 2, 3, 5),
-    GameOption("Hard", 2, 4, 4),
-    GameOption("Advanced", 2, 4, 5),
-    GameOption("Crazy", 3, 4, 4),
-    GameOption("Psychotic", 3, 4, 5),
-  ];
-
   /*static final cardOptions = <CardOption>[
     CardOption(2, 2),
     CardOption(2, 3),
@@ -139,9 +138,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         builder: (context, _) => Slider(
                               value: settings.difficulty.toDouble(),
                               min: 0,
-                              max: gameOptions.length - 1,
-                              divisions: gameOptions.length - 1,
-                              label: gameOptions[gameOption].title,
+                              max: GameOption.options.length - 1,
+                              divisions: GameOption.options.length - 1,
+                              label:
+                                  GameOption.options[settings.difficulty].title,
                               onChanged: (v) => setState(
                                   () => settings.difficulty = v.toInt()),
                             )))
@@ -177,36 +177,36 @@ class _MyHomePageState extends State<MyHomePage> {
               TextButton(
                   child: Text("Play"),
                   onPressed: () =>
-                      loadGame(context, gameOptions[gameOption], false)),
+                      loadGame(context, settings.difficulty, false)),
               /* onPressed: () => loadGame2(
                       context, cardOptions[cardOption], properties, false)),*/
               TextButton(
                   child: Text("Practise"),
                   onPressed: () =>
-                      loadGame(context, gameOptions[gameOption], true)),
+                      loadGame(context, settings.difficulty, true)),
               /*onPressed: () => loadGame2(
                       context, cardOptions[cardOption], properties, true)),*/
               TextButton(
                   child: Text("About"),
                   onPressed: () => Navigator.push(context,
                       MaterialPageRoute(builder: (context) => HowToPlay()))),
-              TextButton(child: Text("High Scores"), onPressed: () {}),
+              TextButton(
+                  child: Text("High Scores"),
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HighscoresView()))),
             ])),
       ),
     );
   }
 
-  loadGame(BuildContext context, GameOption g, bool practise) {
+  loadGame(BuildContext context, int level, bool practise) {
+    final GameOption g = GameOption.options[level];
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Game(g.cols, g.rows, g.depth, practise)));
-  }
-
-  loadGame2(BuildContext context, CardOption g, int depth, bool practise) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Game(g.cols, g.rows, depth, practise)));
+            builder: (context) =>
+                Game(level, g.cols, g.rows, g.depth, practise)));
   }
 }

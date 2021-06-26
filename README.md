@@ -20,9 +20,9 @@ samples, guidance on mobile development, and a full API reference.
 x Pause on leave
 * Settings
 - Sounds
-- High Scores
+x High Scores
 - In App purchases
-* Full screen
+x Full screen
 
 
 
