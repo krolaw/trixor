@@ -70,11 +70,11 @@ class HighscoresView extends StatelessWidget {
             future: highscores.getHighScores(),
             builder: (context, h) {
               int currentLevel = -1;
-              return ListView(padding: EdgeInsets.all(6), children: [
-                DataTable(columns: [
+              return ListView(children: [
+                DataTable(dataRowHeight: 30, headingRowHeight: 30, columns: [
                   DataColumn(label: Text("Date")),
                   DataColumn(label: Text("Name")),
-                  DataColumn(label: Text("Score"))
+                  DataColumn(label: Text("Score"), numeric: true)
                 ], rows: [
                   ...(h.data?.expand<DataRow>((e) {
                         final level = e['level'] as int;
@@ -82,13 +82,18 @@ class HighscoresView extends StatelessWidget {
                         currentLevel = level;
                         return [
                           if (head)
-                            DataRow(cells: [
-                              DataCell(Text(GameOption.options[level].title,
-                                  style: TextStyle(
-                                      color: Theme.of(context).primaryColor))),
-                              DataCell(Container()),
-                              DataCell(Container())
-                            ]),
+                            DataRow(
+                                color: MaterialStateProperty.resolveWith<Color>(
+                                    (Set<MaterialState> states) =>
+                                        Theme.of(context)
+                                            .primaryColor
+                                            .withOpacity(0.5)),
+                                cells: [
+                                  DataCell(
+                                      Text(GameOption.options[level].title)),
+                                  DataCell(Container()),
+                                  DataCell(Container())
+                                ]),
                           DataRow(cells: [
                             DataCell(Text(e['at'].toString())),
                             DataCell(Text(e['name'].toString())),

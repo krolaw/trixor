@@ -26,7 +26,10 @@ dependencies:
   package_info: ^2.0.0
   wakelock: ^0.5.1 # https://pub.dev/packages/wakelock
   sqflite: ^2.0.0+3
-  audioplayers: ^0.19.0 # https://pub.dev/packages/audioplayers
+  #audioplayers: ^0.19.0 # https://pub.dev/packages/audioplayers
+  #assets_audio_player: ^3.0.3+1 # https://pub.dev/packages/assets_audio_player
+  #assets_audio_player_web: ^3.0.3+3
+  just_audio: ^0.7.4
   vibration: ^1.7.4-nullsafety.0 # https://pub.dev/packages/vibration
   shared_preferences: ^2.0.6 # https://pub.dev/packages/shared_preferences
 
@@ -60,7 +63,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - assets/sounds/342750__rhodesmas__coins-purchase-4.wav
+    - assets/sounds/392183__dexus5__negative.wav
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

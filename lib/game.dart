@@ -7,11 +7,12 @@ import 'package:trixor/highscores.dart';
 import 'package:trixor/settings.dart';
 import 'cardView.dart';
 import 'logic.dart' as logic;
+import 'sounds.dart';
 import 'animations.dart' as animation;
 import 'package:wakelock/wakelock.dart';
 import 'package:vibration/vibration.dart';
 
-const startDuration = Duration(seconds: 10); //Duration(minutes: 3);
+const startDuration = Duration(minutes: 3);
 const maxDuration = Duration(minutes: 4);
 const scoreDuration = 30;
 const maxTimeAdd = Duration(seconds: 20);
@@ -202,10 +203,11 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
               }
 
               if (replacing && selected.contains(i)) {
+                final index = selected.indexOf(i);
                 if (replacements.length == 3) {
-                  final index = selected.indexOf(i);
                   final r =
                       CustomPaint(painter: CardPainter(replacements[index]));
+
                   return animation.Success(
                       contain(CardPainter(board.used[i])),
                       r,
@@ -223,7 +225,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
                   return animation.Fail(
                       contain(
                           CardPainter(board.used[i], fail: replacements[0])),
-                      selected.indexOf(i) == 0
+                      index == 0
                           ? () => setState(() {
                                 isAnimating = false;
                                 replacing = false;
@@ -267,7 +269,10 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
                               if (expiry.difference(now) > maxDuration)
                                 expiry = now.add(maxDuration);
                             }
+                            if (settings.sound) sound.right.play();
                           } else {
+                            if (settings.sound) sound.wrong.play();
+
                             Vibration.vibrate();
                           }
                           if (showSet.isNotEmpty) showSet = [];

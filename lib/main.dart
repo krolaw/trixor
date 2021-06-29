@@ -184,8 +184,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Text("Practise"),
                   onPressed: () =>
                       loadGame(context, settings.difficulty, true)),
-              /*onPressed: () => loadGame2(
-                      context, cardOptions[cardOption], properties, true)),*/
               TextButton(
                   child: Text("About"),
                   onPressed: () => Navigator.push(context,
