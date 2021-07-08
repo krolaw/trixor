@@ -45,13 +45,18 @@ class HowToPlay extends StatelessWidget {
   Widget _cardRow(BuildContext context, Iterable<List<int>> attrs, bool omit,
           bool isSet) =>
       Row(
+        mainAxisSize: MainAxisSize.min,
         children: attrs
-            .map<Widget>((c) => Container(
-                margin: EdgeInsets.all(6),
-                width: 80,
-                height: 80,
-                child: CustomPaint(
-                    painter: CardPainter(logic.Card.fromAttrs(c), omit: omit))))
+            .map<Widget>((c) => Expanded(
+                child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Container(
+                        margin: EdgeInsets.all(6),
+                        width: 120,
+                        height: 120,
+                        child: CustomPaint(
+                            painter: CardPainter(logic.Card.fromAttrs(c),
+                                omit: omit))))))
             .followedBy([
           isSet
               ? Icon(

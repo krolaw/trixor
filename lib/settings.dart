@@ -70,13 +70,19 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 // Important: Remove any padding from the ListView.
                 padding: EdgeInsets.zero,
                 children: <Widget>[
-                  /*DrawerHeader(
+                  DrawerHeader(
+                    padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                     ),
-                    child: Text('Settings'),
-                  ),*/
-                  Container(
+                    child: Align(
+                        child: Text(
+                          'Settings',
+                          textScaleFactor: 1.5,
+                        ),
+                        alignment: Alignment.bottomLeft),
+                  ),
+                  /*Container(
                       color: Theme.of(context).primaryColor,
                       height: 80,
                       child: Text(
@@ -84,7 +90,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                         textScaleFactor: 1.3,
                         //style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      padding: EdgeInsets.fromLTRB(16, 40, 16, 0)),
+                      padding: EdgeInsets.fromLTRB(16, 40, 16, 0)),*/
                   CheckboxListTile(
                       title: Text("Sound"),
                       value: settings.sound,

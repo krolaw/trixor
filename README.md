@@ -18,8 +18,8 @@ samples, guidance on mobile development, and a full API reference.
 ## TODOs
 - High speed taps
 x Pause on leave
-* Settings
-- Sounds
+x Settings
+x Sounds
 x High Scores
 - In App purchases
 x Full screen
@@ -27,3 +27,5 @@ x Full screen
 
 
 flutter build apk --obfuscate --split-debug-info=$HOME/junk --target-platform android-arm64
+
+sudo /home/krolaw/Android/Sdk/platform-tools/adb -s 0A231JEC215299 install build/app/outputs/flutter-apk/app-release.apk

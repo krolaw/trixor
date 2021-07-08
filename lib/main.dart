@@ -36,7 +36,9 @@ class MyApp extends StatelessWidget {
                   color: Colors.green)),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
-                backgroundColor: Colors.green, primary: Colors.white),
+                visualDensity: VisualDensity.compact,
+                backgroundColor: Colors.green,
+                primary: Colors.white),
           )),
       home: MyHomePage(),
     );

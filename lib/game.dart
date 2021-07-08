@@ -77,6 +77,12 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
         ? null
         : await highscores.isHighScore(widget.level, score);
     TextEditingController tc = TextEditingController(text: name);
+    if (settings.sound) {
+      if (name != null)
+        sound.win.play();
+      else
+        sound.lose.play();
+    }
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -133,6 +139,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
               }
               timerShow = (remainingTime.inSeconds >= 20) ||
                   (remainingTime.inMilliseconds % 1000 > 500);
+              if (remainingTime.inSeconds < 20 && timerShow) sound.alarm.play();
             });
           });
   }
@@ -257,6 +264,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
                           replacements = board.select(selected);
                           replacing = true;
                           if (replacements.length == 3) {
+                            if (settings.sound) sound.right.play();
                             if (showSet.isEmpty) {
                               final now = DateTime.now();
                               final diff = now.difference(lastFound);
@@ -269,11 +277,9 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
                               if (expiry.difference(now) > maxDuration)
                                 expiry = now.add(maxDuration);
                             }
-                            if (settings.sound) sound.right.play();
                           } else {
                             if (settings.sound) sound.wrong.play();
-
-                            Vibration.vibrate();
+                            if (settings.vibrate) Vibration.vibrate();
                           }
                           if (showSet.isNotEmpty) showSet = [];
                         }));
@@ -308,12 +314,11 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-          _Timer(
-              remainingTime.inMilliseconds / maxDuration.inMilliseconds,
-              gap * 3,
-              score,
-              timerShow,
-              () => setState(() => showSet = board.findSet())),
+          _Timer(remainingTime.inMilliseconds / maxDuration.inMilliseconds,
+              gap * 3, score, timerShow, () {
+            sound.cheat.play();
+            setState(() => showSet = board.findSet());
+          }),
           Expanded(
               child: Center(
                   child: AspectRatio(
