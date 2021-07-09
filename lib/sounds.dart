@@ -1,4 +1,5 @@
 import 'package:just_audio/just_audio.dart';
+import 'package:trixor/settings.dart';
 
 var sound = _Sounds();
 
@@ -44,6 +45,7 @@ class _MyAudio {
   }
 
   play() {
+    if (!settings.sound) return;
     if (once)
       _audio.seek(Duration.zero);
     else {

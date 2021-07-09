@@ -206,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                Game(level, g.cols, g.rows, g.depth, practise)));
+            builder: (context) => SafeArea(
+                child: Game(level, g.cols, g.rows, g.depth, practise))));
   }
 }
