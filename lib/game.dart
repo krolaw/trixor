@@ -94,37 +94,87 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
       sound.lose.play();
     showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Game Over", textScaleFactor: 1.5),
-            content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: name != null
-                    ? [
-                        Text("High Score: $score"),
-                        TextFormField(
-                            decoration: InputDecoration(hintText: "Your name"),
-                            autocorrect: false,
-                            autofocus: true,
-                            maxLength: 20,
-                            controller: tc)
-                      ]
-                    : [Text("Score: $score")]),
-            actions: [
-              TextButton(
-                  onPressed: () =>
-                      finishHighscore(() => Navigator.pop(context), tc),
-                  child: Padding(
-                      child: Text("Show Board"),
-                      padding: EdgeInsets.symmetric(horizontal: 8))),
-              TextButton(
-                  child: Text("Exit"),
-                  onPressed: () => finishHighscore(
-                      () =>
-                          Navigator.popUntil(context, (route) => route.isFirst),
-                      tc))
+          return SimpleDialog(
+            insetPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+            title: Text(name != null ? "High Score: $score" : "Score: $score",
+                textScaleFactor: 1),
+            titlePadding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+            contentPadding: EdgeInsets.fromLTRB(6, 0, 6, 0),
+            children: [
+              if (name != null)
+                TextFormField(
+                    //scrollPadding: EdgeInsets.zero,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                        isCollapsed: true,
+                        isDense: true,
+                        counter: Container(),
+                        hintText: "Your name"),
+                    autocorrect: false,
+                    //enableSuggestions: false,
+                    autofocus: name == "",
+                    maxLength: 20,
+                    controller: tc),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextButton(
+                        onPressed: () =>
+                            finishHighscore(() => Navigator.pop(context), tc),
+                        child: Padding(
+                            child: Text("Show Board"),
+                            padding: EdgeInsets.symmetric(horizontal: 8))),
+                    SizedBox(width: 8),
+                    TextButton(
+                        child: Text("Exit"),
+                        onPressed: () => finishHighscore(
+                            () => Navigator.popUntil(
+                                context, (route) => route.isFirst),
+                            tc))
+                  ])
             ],
           );
+
+          // return AlertDialog(
+          //   title: Text(name != null ? "High Score: $score" : "Score: $score",
+          //       textScaleFactor: 1),
+          //   titlePadding: EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          //   contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 0),
+          //   scrollable: true,
+          //   insetPadding: EdgeInsets.symmetric(horizontal: 40, vertical: 0),
+          //   buttonPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+          //   actionsPadding: EdgeInsets.zero,
+          //   content: TextFormField(
+          //       //scrollPadding: EdgeInsets.zero,
+          //       keyboardType: TextInputType.name,
+          //       decoration: InputDecoration(
+          //           isCollapsed: true,
+          //           isDense: true,
+          //           counter: Container(),
+          //           hintText: "Your name"),
+          //       autocorrect: false,
+          //       enableSuggestions: false,
+          //       autofocus: name == "",
+          //       maxLength: 20,
+          //       controller: tc),
+          //   actions: [
+          //     TextButton(
+          //         onPressed: () =>
+          //             finishHighscore(() => Navigator.pop(context), tc),
+          //         child: Padding(
+          //             child: Text("Show Board"),
+          //             padding: EdgeInsets.symmetric(horizontal: 8))),
+          //     TextButton(
+          //         child: Text("Exit"),
+          //         onPressed: () => finishHighscore(
+          //             () =>
+          //                 Navigator.popUntil(context, (route) => route.isFirst),
+          //             tc))
+          //   ],
+          // );
         });
   }
 
@@ -365,7 +415,7 @@ class _Timer extends StatelessWidget {
 
     return SizedBox(
         height: 32,
-        child: Stack(alignment: Alignment.center, children: [
+        child: Stack(alignment: Alignment.centerLeft, children: [
           Container(
             height: height,
             width: double.infinity,
@@ -374,10 +424,12 @@ class _Timer extends StatelessWidget {
             transformAlignment: Alignment.centerLeft,
             color: colour,
           ),
-          Text(
-            "TriXOR: $score ",
-            textScaleFactor: 1.4,
-          ),
+          Padding(
+              padding: EdgeInsets.only(left: 48),
+              child: Text(
+                "TriXOR: $score ",
+                textScaleFactor: 1.4,
+              )),
           Align(
               alignment: Alignment.topLeft,
               child: IconButton(
@@ -389,6 +441,13 @@ class _Timer extends StatelessWidget {
           Align(
               alignment: Alignment.topRight,
               child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Builder(
+                    builder: (context) => IconButton(
+                        visualDensity: VisualDensity(
+                            vertical: VisualDensity.minimumDensity),
+                        padding: EdgeInsets.zero,
+                        icon: Icon(Icons.settings),
+                        onPressed: () => Scaffold.of(context).openDrawer())),
                 IconButton(
                   visualDensity:
                       VisualDensity(vertical: VisualDensity.minimumDensity),

@@ -42,7 +42,7 @@ class HowToPlay extends StatelessWidget {
         .toList();
   }
 
-  Widget _cardRow(BuildContext context, Iterable<List<int>> attrs, bool omit,
+  Widget _tileRow(BuildContext context, Iterable<List<int>> attrs, bool omit,
           bool isSet) =>
       Row(
         mainAxisSize: MainAxisSize.min,
@@ -90,35 +90,35 @@ class HowToPlay extends StatelessWidget {
           ),
           Text("Goal", style: headStyle),
           Text(
-            "Earn points by quickly finding sets of three cards"
+            "Earn points by quickly finding sets of three tiles"
             " from the grid.",
             textAlign: TextAlign.justify,
           ),
           Text("Set Concepts", style: headStyle),
           Text("This IS a set (all the same colour):"),
-          _cardRow(context, s1.map((e) => [e, -1, 0, 0]), true, true),
+          _tileRow(context, s1.map((e) => [e, -1, 0, 0]), true, true),
           Text("\nThis IS also a set (none the same colour):"),
-          _cardRow(context, s2.map((e) => [e, -1, 0, 0]), true, true),
+          _tileRow(context, s2.map((e) => [e, -1, 0, 0]), true, true),
           Text("\nThis is NOT a set (two the same colour):"),
-          _cardRow(context, s3.map((e) => [e, -1, 0, 0]), true, false),
+          _tileRow(context, s3.map((e) => [e, -1, 0, 0]), true, false),
           Text("Not so Fast", style: headStyle),
           Text(
-              "TriXOR cards use two or more properties (depending on level)."
+              "TriXOR tiles use two or more properties (depending on level)."
               " All properties must follow the \"all or none\" rule, but a single set"
               " can be made up of both \"all\" and \"none\" properties.",
               textAlign: TextAlign.justify),
-          _cardRow(context, a1, false, true),
-          _cardRow(context, a2, false, true),
-          _cardRow(context, a3, false, true),
+          _tileRow(context, a1, false, true),
+          _tileRow(context, a2, false, true),
+          _tileRow(context, a3, false, true),
           Text("\nColor mismatch"),
-          _cardRow(context, a4, false, false),
+          _tileRow(context, a4, false, false),
           Text("\nSymbol mismatch"),
-          _cardRow(context, a5, false, false),
+          _tileRow(context, a5, false, false),
           Text("Game Details", style: headStyle),
           ...<Widget>[
             ...[
               "There is exactly one set on the grid at any given time.",
-              "When the set is found, its three cards are replaced and the game continues.",
+              "When the set is found, its three tiles are replaced and the game continues.",
               "Each set increases the game score by between 1 and 30 points,"
                   " depending on the time taken to find it.",
               "Each set increases the remaining game time by between 0 and 20 seconds,"
@@ -162,7 +162,7 @@ class HowToPlay extends StatelessWidget {
                           Text(" • "),
                           Expanded(child: Text(c, textAlign: TextAlign.justify))
                         ])),
-                _cardRow(context, p1, false, true),
+                _tileRow(context, p1, false, true),
               ],
             )
           ].asMap().entries.map((c) => Container(
@@ -197,9 +197,9 @@ of the brain simultaneously, strengthening communication between the two.
 
 # Goal
 
-Find a group of three cards, where if two cards share the same property, so must
+Find a group of three tiles, where if two tiles share the same property, so must
 the third. Sharing no properties is also valid. Depending on the game level,
-cards will have three to five properties (colour, shape, number, background and
+tiles will have three to five properties (colour, shape, number, background and
 pattern), all must follow the property rule.
 
 These are groups:
@@ -221,7 +221,7 @@ Shape Mismatch
 # Game Play
 Your score and potentially your remaining time increases depending on how fast
 you find each group. There is only ever one possible group on the screen at one
-time. Once found, the three cards are replaced and the game continues.,
+time. Once found, the three tiles are replaced and the game continues.,
 
 # Created by
 Richard Warburton of http://www.prototec.co.nz

@@ -87,7 +87,7 @@ class Board {
           final b = cards[1].attrs[i];
           final c = cards[2].attrs[i];
           if (_match(a, b) == c) return -1;
-          return cards[a == b ? 2 : (a == c ? 1 : 0)].attrs[i];
+          return cards[a == b ? 0 : (a == c ? 0 : 1)].attrs[i];
         }))
       ];
     }

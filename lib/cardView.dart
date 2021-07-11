@@ -43,9 +43,9 @@ class CardPainter extends CustomPainter {
 
   final List<int> attrs;
   final List<int> fail;
-  final failCol = Colors.purpleAccent.shade100;
-  final failCol2 = Colors.purpleAccent.shade400;
-  final failCol3 = Colors.purpleAccent.shade700;
+  final failCol = Colors.grey;
+  final failCol2 = Colors.grey.shade300;
+  final failCol3 = Colors.grey.shade700;
   CardPainter(logic.Card card, {bool omit = false, logic.Card? fail})
       : attrs = [...card.attrs],
         fail = [...(fail?.attrs ?? [])] {
@@ -57,16 +57,24 @@ class CardPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint p = Paint();
 
-    final colour = fail[0] == attrs[0] ? failCol2 : colours[attrs[0]];
+    final colour =
+        (fail[0] != -1 && fail[0] != attrs[0]) ? failCol2 : colours[attrs[0]];
 
     canvas.clipRRect(RRect.fromLTRBR(0, 0, size.width, size.height,
         Radius.elliptical(size.width / 10, size.height / 10)));
 
-    switch (attrs.length > 3 ? attrs[3] : 1) {
+    var gradAttr = attrs.length > 3 ? attrs[3] : 1;
+    if (gradAttr == 1 && fail[3] != -1 && fail[3] != 1) {
+      gradAttr = fail[3];
+    }
+
+    switch (gradAttr) {
       case 0:
         p.shader = ui.Gradient.linear(Offset(0, 0), Offset(size.width, 0), [
           colour,
-          attrs.length > 3 && fail[3] == attrs[3] ? failCol3 : Colors.black
+          (attrs.length > 3 && fail[3] != -1 && fail[3] != attrs[3])
+              ? failCol3
+              : Colors.black
         ], [
           0.5,
           0.95
@@ -79,7 +87,10 @@ class CardPainter extends CustomPainter {
         p.shader = ui.Gradient.linear(
             Offset(0, 0),
             Offset(size.width * 0.20, size.height * 0.10),
-            [colour, fail[3] == attrs[3] ? failCol3 : Colors.black],
+            [
+              colour,
+              (fail[3] != -1 && fail[3] != attrs[3]) ? failCol3 : Colors.black
+            ],
             [0.6, 0.6],
             TileMode.repeated);
         break;
@@ -89,7 +100,7 @@ class CardPainter extends CustomPainter {
 
     final pp = Paint()
       ..color = attrs.length > 4
-          ? (fail[4] == attrs[4] ? failCol3 : Colors.black)
+          ? (fail[4] != -1 && fail[4] != attrs[4] ? failCol3 : Colors.black)
           : Colors.black;
 
     switch (attrs.length > 4 ? this.attrs[4] : 0) {
@@ -157,7 +168,8 @@ class CardPainter extends CustomPainter {
             ..style = PaintingStyle.stroke
             ..strokeCap = StrokeCap.round
             ..strokeJoin = StrokeJoin.round
-            ..color = fail[1] == attrs[1] ? failCol : Colors.white
+            ..color =
+                (fail[1] != -1 && fail[1] != attrs[1]) ? failCol : Colors.white
             ..strokeWidth = width);
     }
 
@@ -167,7 +179,10 @@ class CardPainter extends CustomPainter {
         canvas.drawCircle(
             Offset(width + o / 2, width + o / 2 + i * o * 1.5),
             o / 2,
-            Paint()..color = fail[2] == attrs[2] ? failCol : Colors.white);
+            Paint()
+              ..color = (fail[2] != -1 && fail[2] != attrs[2])
+                  ? failCol
+                  : Colors.white);
     }
   }
 

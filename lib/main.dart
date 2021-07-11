@@ -1,11 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'highscores.dart';
+import 'licences.dart';
 import 'settings.dart';
 import 'game.dart';
 import 'about.dart';
 
 void main() {
+  LicenseRegistry.addLicense(() => licenses());
   runApp(MyApp());
 }
 
@@ -15,31 +18,33 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'TriXOR',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          //scaffoldBackgroundColor: Colors.black,
-          primaryColor: Colors.green,
-          brightness: Brightness.dark,
-          textTheme: TextTheme(
-              headline1: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  height: 2,
-                  color: Colors.green)),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-                visualDensity: VisualDensity.compact,
-                backgroundColor: Colors.green,
-                primary: Colors.white),
-          )),
+        // This is the theme of your application.
+        //
+        // Try running your application with "flutter run". You'll see the
+        // application has a blue toolbar. Then, without quitting the app, try
+        // changing the primarySwatch below to Colors.green and then invoke
+        // "hot reload" (press "r" in the console where you ran "flutter run",
+        // or simply save your changes to "hot reload" in a Flutter IDE).
+        // Notice that the counter didn't reset back to zero; the application
+        // is not restarted.
+        //scaffoldBackgroundColor: Colors.black,
+        primaryColor: Colors.green,
+        brightness: Brightness.dark,
+        textTheme: TextTheme(
+            headline1: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.normal,
+                height: 2,
+                color: Colors.green)),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              backgroundColor: Colors.green,
+              primary: Colors.white),
+        ),
+      ),
       home: MyHomePage(),
     );
   }

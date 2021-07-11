@@ -16,16 +16,23 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 
 ## TODOs
-- High speed taps
+x High speed taps
 x Pause on leave
 x Settings
 x Sounds
 x High Scores
 - In App purchases
 x Full screen
-
+x In Game Settings
+x Tiles
+x Licences (sounds)
+x error display (grey)
 
 
 flutter build apk --obfuscate --split-debug-info=$HOME/junk --target-platform android-arm64
+flutter build appbundle --obfuscate --split-debug-info=$HOME/junk
+
+xdg-open build/app/outputs/bundle/release
+
 
 sudo /home/krolaw/Android/Sdk/platform-tools/adb -s 0A231JEC215299 install build/app/outputs/flutter-apk/app-release.apk
