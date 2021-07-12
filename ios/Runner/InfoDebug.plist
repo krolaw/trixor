@@ -41,6 +41,10 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We don&apos;t use the microphone</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>
