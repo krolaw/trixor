@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
             future: PackageInfo.fromPlatform().then((a) => a.version),
             builder: (context, value) => Text("TriXOR V" + value.data!)),
       ),
-      drawer: SettingsDrawer(),
+      drawer: SettingsDrawer(false),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.

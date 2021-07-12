@@ -132,6 +132,7 @@ class HowToPlay extends StatelessWidget {
                 )),
             Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                     "Depending on level, there are up to 5 changing properties:",

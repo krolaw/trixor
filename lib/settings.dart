@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 _Settings settings = _Settings();
@@ -51,7 +52,8 @@ class _Settings {
 }
 
 class SettingsDrawer extends StatefulWidget {
-  const SettingsDrawer({Key? key}) : super(key: key);
+  final bool changeNow;
+  const SettingsDrawer(this.changeNow, {Key? key}) : super(key: key);
 
   @override
   _SettingsDrawerState createState() => _SettingsDrawerState();
@@ -108,6 +110,11 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                       value: settings.fullscreen,
                       onChanged: (b) => setState(() {
                             settings.fullscreen = b == true;
+                            if (widget.changeNow)
+                              SystemChrome.setEnabledSystemUIOverlays(
+                                  settings.fullscreen
+                                      ? []
+                                      : SystemUiOverlay.values);
                           })),
                 ],
               ),

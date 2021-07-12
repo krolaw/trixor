@@ -235,7 +235,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
     var remainingTime = expiry.difference(DateTime.now());
 
     return Scaffold(
-        drawer: SettingsDrawer(),
+        drawer: SettingsDrawer(true),
         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           _Timer(remainingTime.inMilliseconds / maxDuration.inMilliseconds, 32,
               score, timerShow, () {
@@ -361,12 +361,12 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
                         maxTimeAdd < diff ? Duration.zero : maxTimeAdd - diff);
                     if (expiry.difference(now) > maxDuration)
                       expiry = now.add(maxDuration);
-                  }
+                  } else
+                    showSet = [];
                 } else {
                   sound.wrong.play();
                   if (settings.vibrate) Vibration.vibrate();
                 }
-                if (showSet.isNotEmpty) showSet = [];
               }));
 
     if (selected.contains(i)) {
