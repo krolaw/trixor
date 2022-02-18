@@ -209,7 +209,8 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
   initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
-    if (settings.fullscreen) SystemChrome.setEnabledSystemUIOverlays([]);
+    if (settings.fullscreen)
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     Wakelock.enable();
     timer = setupTimer();
 
@@ -225,7 +226,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
     timer.cancel();
     Wakelock.disable();
     WidgetsBinding.instance!.removeObserver(this);
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   }
 
   final selected = <int>[];
@@ -330,7 +331,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
     }
 
     if (cardState[i] == cardAnimation.expanding) {
-      selected.remove(i);
+      //selected.remove(i);
       return animation.Out(
           contain(CardPainter(board.used[i])),
           () => setState(() {
@@ -342,7 +343,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
           contain(CardPainter(board.used[i])),
           () => setState(() {
                 cardState[i] = cardAnimation.still;
-                selected.add(i);
+                //selected.add(i);
                 if (selected.length != 3) {
                   return;
                 }
@@ -376,6 +377,7 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
       return GestureDetector(
           onTap: () => setState(() {
                 //isAnimating = true;
+                selected.remove(i);
                 cardState[i] = cardAnimation.expanding;
               }),
           child: Container(color: Colors.transparent, child: sc));
@@ -383,6 +385,8 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
       if (isAnimating) return contain(CardPainter(board.used[i]));
       return GestureDetector(
           onTap: () => setState(() {
+                if (selected.length == 3) return;
+                selected.add(i);
                 //isAnimating = true;
                 cardState[i] = cardAnimation.shrinking;
               }),

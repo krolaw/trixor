@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'logic.dart' as logic;
 import 'dart:ui' as ui;
-
-var colours = [
-  Colors.red,
-  Colors.green,
-  Colors.blue,
-];
+import 'settings.dart';
 
 class CardView extends StatefulWidget {
   final int gap;
@@ -57,8 +52,9 @@ class CardPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Paint p = Paint();
 
-    final colour =
-        (fail[0] != -1 && fail[0] != attrs[0]) ? failCol2 : colours[attrs[0]];
+    final colour = (fail[0] != -1 && fail[0] != attrs[0])
+        ? failCol2
+        : settings.colours[attrs[0]];
 
     canvas.clipRRect(RRect.fromLTRBR(0, 0, size.width, size.height,
         Radius.elliptical(size.width / 10, size.height / 10)));
@@ -125,11 +121,6 @@ class CardPainter extends CustomPainter {
             pp);
         break;
     }
-
-    /*canvas
-      ..translate(size.width / 2, size.height / 2)
-      ..rotate(this.attrs[4] * math.pi / 2)
-      ..translate(-size.width / 2, -size.height / 2);*/
 
     final sw = 3 * size.longestSide / 20;
     final width = size.longestSide / 10;
