@@ -28,6 +28,11 @@ x Tiles
 x Licences (sounds)
 x error display (grey)
 
+## Screenshots
+
+6.5" Display: iPhone 11 Pro Max (1242x2688)
+5.5" Display: iPhone 8 Plus ()
+
 
 flutter build apk --obfuscate --split-debug-info=$HOME/junk --target-platform android-arm64
 flutter build appbundle --obfuscate --split-debug-info=$HOME/junk
