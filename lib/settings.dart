@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trixor/cardView.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 _Settings settings = _Settings();
@@ -129,12 +128,13 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                       value: settings.fullscreen,
                       onChanged: (b) => setState(() {
                             settings.fullscreen = b == true;
-                            if (widget.changeNow)
-                              //SystemChrome.setEnabledSystemUIMode(SystemUiMode.values)
-                              SystemChrome.setEnabledSystemUIOverlays(
-                                  settings.fullscreen
-                                      ? []
-                                      : SystemUiOverlay.values);
+                            if (widget.changeNow) if (settings.fullscreen)
+                              SystemChrome.setEnabledSystemUIMode(
+                                  SystemUiMode.immersive);
+                            else
+                              SystemChrome.setEnabledSystemUIMode(
+                                  SystemUiMode.manual,
+                                  overlays: SystemUiOverlay.values);
                           })),
                   ListTile(
                     title: Text("Card Backgrounds"),

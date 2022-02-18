@@ -226,7 +226,8 @@ class _GameState extends State<Game> with WidgetsBindingObserver {
     timer.cancel();
     Wakelock.disable();
     WidgetsBinding.instance!.removeObserver(this);
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
+        overlays: SystemUiOverlay.values);
   }
 
   final selected = <int>[];

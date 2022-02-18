@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'cardView.dart';
 import 'logic.dart' as logic;
 
@@ -179,12 +180,11 @@ class HowToPlay extends StatelessWidget {
                         child: c.value,
                       )
                     ]))),
-            /*AspectRatio(
-              aspectRatio: 1,
-              child: CustomPaint(
-                  size: Size(80, 80),
-                  painter: CardPainter(logic.Card.fromAttrs([2, 0, 2, 0, 0]),
-                      omit: false))),*/
+            Text("Source", style: headStyle),
+            InkWell(
+                child: Text("https://github.com/krolaw/trixor"),
+                onTap: () => launch('https://github.com/krolaw/trixor',
+                    forceSafariVC: false, forceWebView: true)),
             Text("Licences", style: headStyle),
             Text("This app depends on various libraries. Their licences can be"
                 " viewed by clicking the button below."),
