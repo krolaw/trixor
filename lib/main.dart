@@ -20,6 +20,10 @@ class MyApp extends StatelessWidget {
       title: 'TriXOR',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.green,
+          centerTitle: false,
+        ),
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the

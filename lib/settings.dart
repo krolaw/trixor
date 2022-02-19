@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 _Settings settings = _Settings();
+
+const _defaultColours = [Colors.red, Colors.green, Colors.blue];
 
 class _Settings {
   late SharedPreferences sp;
@@ -15,12 +18,21 @@ class _Settings {
   bool _sound = true;
   bool _fullscreen = true;
 
+  List<Color> colours = [Colors.red, Colors.green, Colors.blue];
+
   _Settings() {
     SharedPreferences.getInstance().then((s) {
       _vibrate = s.getBool("vibrate") ?? _vibrate;
       _difficulty = s.getInt("difficulty") ?? _difficulty;
       _sound = s.getBool("sound") ?? _sound;
       _fullscreen = s.getBool("fullscreen") ?? _fullscreen;
+
+      colours = [
+        Color(s.getInt("colour1") ?? colours[0].value),
+        Color(s.getInt("colour2") ?? colours[1].value),
+        Color(s.getInt("colour3") ?? colours[2].value),
+      ];
+
       sp = s;
       loaded.complete();
     });
@@ -48,6 +60,11 @@ class _Settings {
   set difficulty(int t) {
     _difficulty = t;
     sp.setInt("difficulty", t);
+  }
+
+  setColour(int index, Color col) {
+    colours[index] = col;
+    sp.setInt("colour" + (index + 1).toString(), col.value);
   }
 }
 
@@ -93,6 +110,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                         //style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       padding: EdgeInsets.fromLTRB(16, 40, 16, 0)),*/
+
                   CheckboxListTile(
                       title: Text("Sound"),
                       value: settings.sound,
@@ -110,14 +128,87 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                       value: settings.fullscreen,
                       onChanged: (b) => setState(() {
                             settings.fullscreen = b == true;
-                            if (widget.changeNow)
-                              SystemChrome.setEnabledSystemUIOverlays(
-                                  settings.fullscreen
-                                      ? []
-                                      : SystemUiOverlay.values);
+                            if (widget.changeNow) if (settings.fullscreen)
+                              SystemChrome.setEnabledSystemUIMode(
+                                  SystemUiMode.immersive);
+                            else
+                              SystemChrome.setEnabledSystemUIMode(
+                                  SystemUiMode.manual,
+                                  overlays: SystemUiOverlay.values);
                           })),
+                  ListTile(
+                    title: Text("Card Backgrounds"),
+                    subtitle: Row(children: [
+                      TextButton(
+                          onPressed: () => getColor(context, 0),
+                          child: Container(
+                              color: settings.colours[0],
+                              width: 30,
+                              height: 20)),
+                      Spacer(),
+                      TextButton(
+                          onPressed: () => getColor(context, 1),
+                          child: Container(
+                              color: settings.colours[1],
+                              width: 30,
+                              height: 20)),
+                      Spacer(),
+                      TextButton(
+                          onPressed: () => getColor(context, 2),
+                          child: Container(
+                              color: settings.colours[2],
+                              width: 30,
+                              height: 20)),
+                    ]),
+                  ),
                 ],
               ),
             ));
+  }
+
+  Color pickerColor = settings.colours[0];
+
+  void changeColor(Color color, int index) {
+    setState(() => pickerColor = color);
+  }
+
+  getColor(BuildContext context, int index) {
+    pickerColor = settings.colours[index];
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        content: SingleChildScrollView(
+          child: ColorPicker(
+            paletteType: PaletteType.hueWheel,
+            enableAlpha: false,
+            labelTypes: [],
+            pickerColor: pickerColor,
+            onColorChanged: (Color c) => changeColor(c, index),
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Reset'),
+            onPressed: () {
+              setState(() => settings.setColour(index, _defaultColours[index]));
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Apply'),
+            onPressed: () {
+              setState(() => settings.setColour(index, pickerColor));
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

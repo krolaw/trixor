@@ -1,38 +1,47 @@
-# trixor
+# Trixor
 
-A new Flutter project.
+A Flutter based tile card puzzle game.
 
-## Getting Started
+## Build Notes
 
-This project is a starting point for a Flutter application.
+### Google Play
 
-A few resources to get you started if this is your first Flutter project:
+https://flutter.dev/docs/deployment/android
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+1. flutter build appbundle --obfuscate --split-debug-info=../aabDebug
+1. https://play.google.com/apps/publish
+1. Click on App
+1. Release -> Production -> Create Release
+1. Upload bundle
+1. Type in version
+1. Type in changes
+1. Click Save
+1. Click Review
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+keyPass: myappkey
 
-## TODOs
-x High speed taps
-x Pause on leave
-x Settings
-x Sounds
-x High Scores
-- In App purchases
-x Full screen
-x In Game Settings
-x Tiles
-x Licences (sounds)
-x error display (grey)
+### App Store
 
-## Screenshots
+https://flutter.dev/docs/deployment/ios
+
+1. On command line: `flutter clean ; flutter build ios --obfuscate --split-debug-info=../aabDebug`
+1. In Code Product > Scheme > Runner.
+1. Product > Destination > Generic iOS Device.
+1. Verify version
+1. Product > Archive (wait)
+1. Click Validate (and continue etc)
+1. Click Distribute (and cont. etc)
+1. Upload and wait for email
+1. https://appstoreconnect.apple.com/
+1. Click My Apps
+1. Click + Version or Platform
+
+#### Screenshots
 
 6.5" Display: iPhone 11 Pro Max (1242x2688)
 5.5" Display: iPhone 8 Plus ()
 
+### Bits
 
 flutter build apk --obfuscate --split-debug-info=$HOME/junk --target-platform android-arm64
 flutter build appbundle --obfuscate --split-debug-info=$HOME/junk
